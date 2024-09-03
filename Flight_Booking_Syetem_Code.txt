@@ -1,0 +1,895 @@
+import mysql.connector
+import pickle
+from csv import DictWriter
+from csv import DictReader
+import os
+deploc=[]
+arrloc=[]
+fli=[]
+e=[]
+
+mydb = mysql.connector.connect(host='localhost',user='root',password='jasim1979',database='flight_booking')
+my_cursor = mydb.cursor()
+
+# ---------------------------------------------------------------Hotels--------------------------------------------------------------
+
+def add_hotels():
+    ch="yY"
+    while ch in "yY":
+        hotel_id=input("Enter Hotel ID: ")
+        hotel_name=input("Enter Hotel Name: ")
+        city=input("Enter City :")
+        location=input("Enter Location: ")
+        star_rating=float(input("Enter Star Rating: "))
+        accom_type=input("Enter Accomodation Type: ")
+        contact=int(input("Enter Contact Number: "))
+        price=int(input("Enter Price: "))
+        my_cursor.execute(f"insert into hotels values('{hotel_id}', '{hotel_name}', '{city}', '{location}', {star_rating}, '{accom_type}', {contact}, {price})")
+        mydb.commit()
+        ch=input("Do You Want Continue?Y/N")
+
+
+def display_hotels():
+    my_cursor.execute("select *from hotels")
+    for i in my_cursor:
+        print()
+        print(f"Hotel code : {i[0]}")
+        print(f"Hotel Name : {i[1]}")
+        print(f"City : {i[2]}")
+        print(f"Location : {i[3]}")
+        print(f"Rating : {i[4]}")
+        print(f"Accomdation  Type : {i[5]}")
+        print(f"Contact No : {i[6]}")
+        print(f"Price: {i[7]}")
+        
+
+
+def update_hotels():
+    print("1. To Update Star Rating\n2. To Update Accomdation Type\n3. To Update Contact no\n4. To Update Price")
+    hotel_id = input('Enter Hotel ID to Update : ') # As primary key used to update
+    my_cursor.execute("select *from hotels")
+    a = 0
+    for i in my_cursor:
+        if i[0] == hotel_id:
+            choice = int(input("Enter Your Choice : "))
+            if choice == 1:
+                rating = int(input("Enter New Rating : "))
+                my_cursor.execute(f"update hotels Set Rating = {rating} where ID = '{hotel_id}'")
+                mydb.commit()
+            elif choice == 2:
+                Accomdation_type = input("Enter New Accomdation Type : ")
+                my_cursor.execute(f"update hotels Set accomadation_type = '{Accomdation_type}' where ID = '{hotel_id}'")
+                mydb.commit()
+            elif choice == 3:
+                Contact = int(input("Enter New contact : "))
+                my_cursor.execute(f"update hotels Set Contact = {Contact} where ID = '{hotel_id}'")
+                mydb.commit()
+            elif choice == 4:
+                price = int(input("Enter New Price : "))
+                my_cursor.execute(f"update hotels Set price = {price} where ID = '{hotel_id}'")
+                mydb.commit()
+            a +=1 
+            print('Record successfully Updated')
+    if a == 0:
+        print("Hotel ID not Found")
+    
+
+
+def delete_hotels():
+    hotel_id = input('Enter Hotel ID to Delete : ') # As primary key used to delete
+    my_cursor.execute("select *from hotels")
+    a = 0
+    for i in my_cursor:
+        if i[0] == hotel_id:
+            my_cursor.execute(f"delete from hotels where ID = '{hotel_id}'")
+            mydb.commit()
+            a +=1
+            print('Record successfully Deleted')
+    if a == 0:
+        print("Hotel ID not Found")
+        
+
+def mainh():
+    while True:
+        print("""\n\tEnter 1, To Add Hotels
+\tEnter 2, To Display All Hotels
+\tEnter 3, To Update  Hotel Details
+\tEnter 4, To Delete A  Hotel
+\tEnter 5, To Exit Hotels Module""")
+        choice = int(input("\nEnter Your Choice"))
+
+        if choice == 1:
+            add_hotels()
+        elif choice == 2:
+            display_hotels()
+        elif choice == 3:
+            update_hotels()
+        elif choice == 4:
+            delete_hotels()
+        elif choice == 5:
+            book_flights()
+            
+        else:
+            print("Invalid Input")
+
+# ---------------------------------------------------------------Flights--------------------------------------------------------------
+
+
+def add_flights():
+    ch = "Yy"
+    while ch in "Yy":
+        flight_no = input("Enter Flight No. : ")
+        class_type = input("Enter Class : ")
+        departure = input("Enter departure: ")
+        arrival = input("Enter Your Destination: ")
+        airline = input("Enter Flight: ")
+        departure_time = input("Enter Departure Date: ")
+        arrival_time = input("Enter Arrival Date: ")
+        price = int(input("Enter Ticket Price:"))
+        my_cursor.execute(f"insert into flights values('{flight_no}', '{class_type}', '{departure}', '{arrival}','{airline}', '{departure_time}', '{arrival_time}', {price})")
+        mydb.commit()
+        ch = input("Do you want to continue?(Y/N)")
+
+
+def display_flights():
+            
+    my_cursor.execute("select *from flights")
+    for i in my_cursor:
+        print()
+        print(f"flight_no : {i[0]}")
+        print(f"class_type : {i[1]}")
+        print(f"departure : {i[2]}")
+        print(f"arrival : {i[3]}")
+        print(f"airline : {i[4]}")
+        print(f"departure_time : {i[5]}")
+        print(f"Arrival_time : {i[6]}")
+        print(f"Price: {i[7]}")
+
+def update_flights():
+    print("1. To Update Price\n2. To Update Departures\n3. To Update Arrivals")
+    flight_ID = input('Enter Flight ID to Update : ') # As primary key used to update
+    my_cursor.execute("select *from flights")
+    a = 0
+    for i in my_cursor:
+        if i[0] == flight_ID:
+            choice = int(input("Enter Your Choice : "))
+            if choice == 1:
+                price = int(input("Enter New Price : "))
+                my_cursor.execute(f"update flights Set Charges = {price} where ID = '{flight_ID}'")
+                mydb.commit()
+            elif choice == 2:
+                Departures = input("Enter New Departure : ")
+                my_cursor.execute(f"update flights Set Departures = '{Departures}' where ID = '{flight_ID}'")
+                mydb.commit()
+            elif choice == 3:
+                Arrival = input("Enter New Arrival : ")
+                my_cursor.execute(f"update flights Set Arrival = '{Arrival}' where ID = '{flight_ID}'")
+                mydb.commit()
+            a +=1 
+            print('Record successfully Updated')
+    if a == 0:
+        print("Flight ID not Found")
+        
+
+def delete_details():
+    flight_ID = input('Enter Flight ID to Delete : ') # As primary key used to delete
+    my_cursor.execute("select *from flights")
+    a = 0
+    for i in my_cursor:
+        if i[0] == flight_ID:
+            my_cursor.execute(f"delete from flights where ID = '{flight_ID}'")
+            mydb.commit()
+            a +=1
+            print('Record successfully Deleted')
+    if a == 0:
+        print("Flights ID not Found")
+
+
+def mainf():
+    while True:
+
+        print("""\n\tEnter 1 : To Add Flight Details
+\tEnter 2 : To Display All Flight Details
+\tEnter 3 : To Update Flight Details
+\tEnter 4 :  To Delete A Flight
+\tEnter 5 : To leave Flight Module : '""")
+
+        choice = int(input("\nEnter Your Choice"))
+
+        if choice == 1:
+            add_flights()
+        elif choice == 2:
+            display_flights()
+        elif choice == 3:
+            update_flights()
+        elif choice == 4:
+            delete_details()
+        elif choice == 5:
+            book_flights()
+        else:
+            print("Invalid Input")
+            
+# ---------------------------------------------------------------Meals--------------------------------------------------------------
+
+
+def add_meals():
+        ch = "Yy"
+        while ch in "Yy":
+            meal_code = input("Enter code: ")
+            meal_type = input("Enter meal type: ")
+            price = float(input("Enter price: "))
+            my_cursor.execute(f"insert into meal values('{meal_code}', '{meal_type}', {price})")
+            mydb.commit()
+            ch = input("Do you want to continue?Y/N")
+            
+
+
+def display_meals():
+    my_cursor.execute("select *from meal")
+    for i in my_cursor:
+        print()
+        print(f"Meal Code : {i[0]}")
+        print(f"Meal Type : {i[1]}")
+        print(f"Price: {i[2]}")
+   
+
+def update_meals():
+    print("1. To Update Meal Type\n2. To Update Price")
+    meal_code = input('Enter Meal Code to Update : ') # As primary key used to update
+    my_cursor.execute("select *from meal")
+    a = 0
+    for i in my_cursor:
+        if i[0] == meal_code:
+            choice = int(input("Enter Your Choice : "))
+            if choice == 1:
+                meal_type = input("Enter New Meal Type : ")
+                my_cursor.execute(f"update meal Set meal_type = '{meal_type}' where Meal_code = '{meal_code}'")
+                mydb.commit()
+            elif choice == 2:
+                Price = float(input("Enter New Price : "))
+                my_cursor.execute(f"update meal Set Price = {Price} where Meal_code = '{meal_code}'")
+                mydb.commit()
+            a +=1 
+            print('Record successfully Updated')
+    if a == 0:
+        print("Meal Code not Found")
+
+    
+    '''
+    with open("meals", "rb+")as f:
+        choice = int(input(''1.To update meal_type.
+2.To update price.
+Enter your choice:''))
+        if choice == 1:
+            code = input("\nEnter code to update:")
+            update = False
+            while True:
+                try:
+                    pos = f.tell()
+                    data = pickle.load(f)
+
+                    if data[0] == code:
+                        new = input('Enter new meal_type: ')
+                        data[1] = new
+                        f.seek(pos)
+                        pickle.dump(data, f)
+                        print("Record Updated Successfully ")
+                        update = True
+                        break
+
+                except EOFError:
+                    break
+
+            if update == False:
+                print("Record not found")
+
+        if choice == 2:
+            code = input("\nEnter code to update:")
+            update = False
+            while True:
+                try:
+                    pos = f.tell()
+                    data = pickle.load(f)
+
+                    if data[0] == code:
+                        new = int(input('Enter new price: '))
+                        data[3] = new
+                        f.seek(pos)
+                        pickle.dump(data, f)
+                        print("Record Updated Successfully ")
+                        update = True
+                        break
+
+                except EOFError:
+                    break
+
+            if update == False:
+                print("Record not found")
+    '''
+
+
+def delete_meals():
+    meal_code = input('Enter Meal Code to Delete : ') # As primary key used to delete
+    my_cursor.execute("select *from meal")
+    a = 0
+    for i in my_cursor:
+        if i[0] == meal_code:
+            my_cursor.execute(f"delete from meal where ID = '{meal_code}'")
+            mydb.commit()
+            a +=1
+            print('Record successfully Deleted')
+    if a == 0:
+        print("Meal Code not Found")
+    
+    '''
+    Del = input("Enter code ")
+    deleted = False
+    fnew = open('newfile', 'wb')
+    with open("meals", "rb")as f:
+        while True:
+            try:
+                data = pickle.load(f)
+                if data[0].upper() == Del.upper():
+                    deleted = True
+                    print(data)
+                    print('Record successfully deleted ')
+                else:
+                    pickle.dump(data, fnew)
+
+            except EOFError:
+                break
+    fnew.close()
+    if deleted == False:
+        print('Record not found !!! ')
+    else:
+        os.remove('meals')
+        os.rename('newfile', 'meals')
+    '''
+
+
+def main_s():
+    while True:
+        print('''\n\tEnter 1. To Add Meals
+\tEnter 2. To Display Meals
+\tEnter 3. To Update Meals
+\tEnter 4. To Delete Meals
+\tEnter 5, To Exit Meals Module''')
+
+        choice = int(input("\nEnter your choice:"))
+
+        if choice == 1:
+            add_meals()
+
+        elif choice == 2:
+            display_meals()
+
+        elif choice == 3:
+            update_meals()
+
+        elif choice == 4:
+            delete_meals()
+
+        elif choice == 5:
+            book_flights()
+
+        else:
+            print("Invalid Input")
+
+
+
+def flight_data():
+
+    departure = input("\nEnter Departure Location: ")
+    arrival = input("\nEnter Arrival Location: ")
+    query1="Select AIRLINES_NAME , CHARGES from FLIGHTS where DEPARTURE= '{}' and DESTINATION='{}'".format(departure,arrival)
+    deploc.append(departure)
+    arrloc.append(arrival)
+    my_cursor.execute(query1)
+    print('\n Available Flights Are: ')
+    for i in my_cursor:
+        print()
+        print(f"Flight Name    : {i[0]}")
+        print(f"Flight Charges : {i[1]}")
+        print()   
+    fly = input("\nEnter The Flight You Would Like To Choose ? ")
+    fli.append(fly)
+    print('\n Details of Your Flight : ')
+    query2 = "Select * from FLIGHTS where AIRLINES_NAME = '{}' and DEPARTURE ='{}' and DESTINATION = '{}'".format(fly,departure,arrival)
+    my_cursor.execute(query2)
+    for i in my_cursor:
+        print("| S.NO | AIRLINE NAME | DEPARTURE | ARRIVAL | FLIGHT NO. | TIME OF DEPARTURE | TIME OF ARRIVAL | CHARGES |")
+        print(f"  {i[0]}     {i[1]}        {i[2]}      {i[3]}    {i[4]}         {i[5]}           {i[6]}         {i[7]}         ")
+
+def create():
+
+    ch = input('\nWould You Like To Create an Account (Y/N) ? ')
+    if ch in ['y', 'Y', 'YES', 'Yes', 'yES', 'yEs', 'yeS', 'YeS']:
+        print('\n Enter Registeration Details: ')
+        name = input('\n Full Name: ')
+        mobno = input('\n Mobile Number: ')
+        email = input("\n Email ID:")
+        t = 1
+        if email[-8::] == 'mail.com' or email[-8::] == 'yahoo.com':
+            pas = input("\n Password")
+            e.append(email)
+            print(f"\nOTP SENT TO {mobno} AND {email}")
+            otp = input("\nEnter The OTP Sent to Your Email / Phone No. ")
+            my_cursor.execute("insert into reginfo values('%s')" % (email))
+            mydb.commit()
+            t = 0
+            print('\n---------------ACCOUNT CREATED SUCCESSFULLY!---------------')
+
+        else:
+            print("\nInvalid Email Entered . PLease Enter Email with a valid Domain with '.com' at the end")
+            while t == 1:
+                create()
+print('\n')
+
+def read_csv():
+    with open('userdata.csv') as csvreader:
+        reader = DictReader(csvreader)
+        for r in reader:
+            print(r)
+    os.remove(r'userdata.csv')
+    return print("------------------------------------------")
+
+def pass_data():
+
+    name=input("\nEnter Name of Passenger:")
+    age=int(input(f"\nEnter Age of {name} : "))
+    gender=input("Enter Gender ( M/F ) : ")
+    nam.append(name)
+    ag.append(age)
+    gende.append(gender)
+    with open('userdata.csv','a',newline = '') as csvfile:
+        csvwriter = DictWriter(csvfile , fieldnames = ['name',age ,'gender'],extrasaction='ignore')
+        csvwriter.writeheader()
+        csvwriter.writerow({'name':name , 'age' : age , 'gender' : gender})
+        return print('\n------------DATA ENTERED SUCCESSFULLY!------------')
+
+nam = []
+ag = []
+gende = []
+flo = []
+tdep = []
+tarr= []
+
+def fl_nm():
+    query4 = "SELECT FLIGHT_NO FROM FLIGHTS WHERE airlines_name = '{}' and DEPARTURE = '{}' and DESTINATION = '{}' ".format (fli[0], deploc[0], arrloc[0])
+    my_cursor.execute(query4)
+    for f in my_cursor:
+        flo.append(f)
+
+    query5 = "SELECT TIME_OF_DEPARTURE FROM FLIGHTS WHERE airlines_name = '{}' and DEPARTURE = '{}' and DESTINATION = '{}' ".format (fli[0], deploc[0], arrloc[0])
+    my_cursor.execute(query5)
+    for g in my_cursor:
+        tdep.append(g)
+
+    query6 = "SELECT TIME_OF_ARRIVAL FROM FLIGHTS WHERE airlines_name = '{}' and DEPARTURE = '{}' and DESTINATION = '{}' ".format (fli[0], deploc[0], arrloc[0])
+    my_cursor.execute(query6)
+    for h in my_cursor:
+        tarr.append(h)
+
+an = []
+de = []
+ds = []
+td = []
+ta = []
+
+def fl_no():
+    query7 = "SELECT AIRLINES_NAME FROM FLIGHTS WHERE FLIGHT_NO = '{}'".format(num)
+    my_cursor.execute(query7)
+    for i in my_cursor:
+        an.append(i)
+
+    query8 = "SELECT DEPARTURE FROM FLIGHTS WHERE FLIGHT_NO = '{}'".format(num)
+    my_cursor.execute(query8)
+    for j in my_cursor:
+        de.append(j)
+
+    query9 = "SELECT DESTINATION FROM FLIGHTS WHERE FLIGHT_NO = '{}'".format(num)
+    my_cursor.execute(query9)
+    for k in my_cursor:
+        ds.append(k)
+
+    query10 = "SELECT TIME_OF_DEPARTURE FROM FLIGHTS WHERE FLIGHT_NO = '{}'".format(num)
+    my_cursor.execute(query10)
+    for l in my_cursor:
+        td.append(l)
+
+    query11 = "SELECT TIME_OF_ARRIVAL FROM FLIGHTS WHERE FLIGHT_NO = '{}'".format(num)
+    my_cursor.execute(query11)
+    for m in my_cursor:
+        ta.append(m)
+
+
+def flightmeals():
+    global mc1
+    mc1=int(input("""
+Would you like to have meals during your flight :
+-------------------------------------------------
+1)YES
+2)NO
+
+Your Choice : """))
+    if mc1==1:
+        query1="select*from meals;"
+        my_cursor.execute(query1)
+        for i in my_cursor:
+            print()
+            print(f"Meal code : {i[0]}")
+            print(f"Meal Type : {i[1]}")
+            print(f"Price: {i[2]}")
+        choice=input("Enter your meal choice using meal code :")
+        query2="select*from meals where meal_code='{}'".format(choice)
+        my_cursor.execute(query2)
+        global mp1
+        mp1=int(f"{i[2]}")
+        for i in  my_cursor:
+            print()
+            print('------------MEAL--SELECTED------------')
+            print()
+            print(f"Meal code : {i[0]}")
+            print(f"Meal Type : {i[1]}")
+            print(f"Price: {i[2]}")
+            print()
+        print("------------------THANK YOU----------------------")
+    elif mc1==2:
+        print()
+        print("NO MEALS SELECTED ")
+        print()
+
+def flighthotels():
+    global hc1
+    hc1=int(input("""
+Would you like to book a hotel to stay in ?
+      
+1)YES
+2)NO  
+       
+Enter your choice : """))
+    if hc1==1:
+        query3="select*from hotels;"
+        my_cursor.execute(query3)
+        print()
+        print()
+        print("---------------------HOTELS----------------------")
+        for i in my_cursor:
+            print()
+            print(f"Hotel Code : {i[0]}")
+            print(f"Hotel Name : {i[1]}")
+            print(f"City       : {i[2]}")
+            print(f"Location   : {i[3]}")
+            print(f"Rating     : {i[4]}")
+            print(f"Accomdation Type : {i[5]}")
+            print(f"Contact No : {i[6]}")
+            print(f"Price      : {i[7]}")
+            print()
+            print("-------------------------------------------------")
+        choiceh=input("Enter The Hotel you want using the Hotel code given : ")
+        query4="select*from hotels where ID='{}'".format(choiceh)
+        my_cursor.execute(query4)
+        global hp1
+        hp1=int(f"{i[7]}")
+        for i in my_cursor:
+            print()
+            print("---------------HOTEL--SELECTED------------------")
+            print()
+            print(f"Hotel Code : {i[0]}")
+            print(f"Hotel Name : {i[1]}")
+            print(f"City       : {i[2]}")
+            print(f"Location   : {i[3]}")
+            print(f"Rating     : {i[4]}")
+            print(f"Accomdation Type : {i[5]}")
+            print(f"Contact No : {i[6]}")
+            print(f"Price      : {i[7]}")
+            print()
+            print("------------------THANK YOU----------------------")
+            print()
+
+    
+    elif hc1==2:
+        print()
+        print("---------------NO--HOTEL--SELECTED----------------- ")
+        print()
+    
+
+
+#passenger data
+def login():
+    print("-" * 100)
+    pw="2716"
+    password = input("\nEnter Admin password:")
+    if password == pw :
+        t=1
+        print("Login Successful")
+        task = int(input("""\nEnter 1 : To access Flights Module
+Enter 2 : To access Hotels Module
+Enter 3 : To access Meals Module      :"""))
+        print("-" * 100)
+        if task == 1:
+            mainf()
+        elif task == 2:
+            mainh()
+        elif task == 3:
+            main_s()
+        else:
+            print("Inavalid Entry")
+
+    else:
+        t=0
+        while t == 0:
+            print("Incorrect Login Details Entered")
+            login()
+def book_flights():
+    print("     **WELCOME TO FLIGHT BOOKING SYSTEM**")
+    print('\n Login With Your Credentials to Use Our Services ')
+    enter_as = int(input("""\n1. Enter As a Flight Administrator:
+2. Enter As a Passenger:  
+
+Enter (1/2) : """))
+    if enter_as == 1:
+        pw = "2716"
+        login()
+
+
+    else:
+        acc = input('\nDo you Have an Existing Account (Y/N) ? ')
+        if acc in ['y', 'Y', 'YES', 'Yes', 'yES', 'yEs', 'yeS', 'YeS']:
+            db = mysql.connector.connect(host='localhost', user='root', password='jasim1979', database='flight_booking')
+            c = db.cursor()
+            c.execute("SELECT * from REGINFO")
+            email = input("\n Email ID:")
+            for j in c:
+                if email in list(j):
+                    print('\nAccount Exists')
+                    pas = input("\n Password")
+                    print(f"\nOTP SENT TO Mobile No. AND {email}")
+                    otp = input("\nEnter The OTP Sent to Your Email / Phone No. ")
+                    print('\n---------------LOGIN SUCCESSFUL!---------------')
+                    break
+                else:
+                    pass
+            else:
+                print('\nAccount Does Not Exist')
+                create()
+        else:
+            create()
+
+    enter = int(input("""                                          
+    Enter 1 : To Book/Search Flights                             
+    Enter 2 : Covid Help/Guide  & FAQs   
+    Enter 3 : To exit,                                                  
+    Enter Choice : """))
+
+    if enter == 1:
+        print("\nHOW WOULD YOU LIKE TO SEARCH YOUR FLIGHT BY?")
+        print("\n1. Flight Number")
+        print("\n2. Manually")
+        ans = int(input("\nEnter : "))
+        if ans == 1:
+            global num
+            num = input("Flight Number : ")
+            query3 = "Select * from flights where FLIGHT_NO = '{}'".format(num)
+            my_cursor.execute(query3)
+            print('\n Your Flight Data Is: ')
+            for i in my_cursor:
+                print(i)
+        elif ans == 2:
+            flight_data()
+        else:
+            print('Invalid Character')
+        while True:
+            cont = input("Would You Like To Continue with the Booking ? ")
+            if cont in ['n', 'N', 'No', 'NO', 'nO']:
+                flight_data()
+            else:
+                break
+        passenger = int(input("Number Of Passengers: "))
+        for i in range(passenger):
+            pass_data()
+
+        read_csv()
+
+        print("Check Your Details :- ")
+        ch=input("Do You Want To Continue ? (y/n) :- ")
+        while True:
+            if ch in ['n','N','No','no','NO']:
+                for e in range(passenger):
+                    pass_data()
+                read_csv()
+            else:
+                break
+        flightmeals()
+        flighthotels()
+        
+        flo = []
+        tdep = []
+        tarr = []
+        print("Choose The Class You Would Like To Select : ")
+        print("1. Economy Class")
+        print("2. Buisness Class (+30% Charges) ")
+        print("3. First Class (+60% Charges) ")
+        cl = int(input("\nENTER CLASS NO (1/2/3):-"))
+        
+
+        payment = []
+
+        if ans == 1 and cl == 1:
+            fl_no()
+            query12 = "SELECT CHARGES*{} FROM FLIGHTS WHERE FLIGHT_NO = '{}'".format(passenger, num)
+            my_cursor.execute(query12)
+            print(f"\nnames = {nam}               age = {ag}           gender = {gende}")
+            print(f"flight name = {an}         departure = {de}       destination = {ds}")
+            print(f"flight number = {num}      departure time = {td}        arrival time = {ta}     ")
+            print("class = economy class")
+            for n in my_cursor:
+                payment.append(n)
+                print()
+                print("-------------------------------------------------")
+                print(f"\nTicket price : Rs {n} ")
+              
+            
+
+        elif ans == 1 and cl == 2:
+            fl_no()
+            query13 = "SELECT (CHARGES +CHARGES*0.2)*{} FROM FLIGHTS WHERE flight_no = '{}' ".format(passenger, num)
+            my_cursor.execute(query13)
+            print(f"\nnames = {nam}               age = {ag}           gender = {gende}")
+            print(f"flight name = {an}         departure = {de}       destination = {ds}")
+            print(f"flight number = {num}      departure time = {td}        arrival time = {ta}     ")
+            print("class = business class")
+            for o in my_cursor:
+                payment.append(o)
+                print()
+                print("-------------------------------------------------")
+                print(f"\nTicket price : Rs {o} ")
+
+        elif ans == 1 and cl == 3:
+            fl_no()
+            query14 = "SELECT (CHARGES +CHARGES*0.4)*{} FROM FLIGHTS WHERE FLIGHT_NO = '{}'".format(passenger, num)
+            my_cursor.execute(query14)
+            print(f"\nnames = {nam}               age = {ag}           gender = {gende}")
+            print(f"flight name = {an}         departure = {de}       destination = {de}")
+            print(f"flight number = {num}      departure time = {td}        arrival time = {ta}     ")
+            print("class = first class")
+            for p in my_cursor:
+                payment.append(p)
+                print()
+                print("-------------------------------------------------")
+                print(f"\nTicket price : Rs {p} ")
+
+
+        elif ans == 2 and cl == 1:
+            fl_nm()
+            query15 = "SELECT CHARGES*{} FROM FLIGHTS WHERE airlines_name = '{}' and DEPARTURE = '{}' and DESTINATION = '{}' ".format(
+                passenger, fli[0], deploc[0], arrloc[0])
+            my_cursor.execute(query15)
+            print(f"\nnames = {nam}               age = {ag}           gender = {gende}")
+            print(f"flight name = {fli}         departure = {deploc}       destination = {arrloc}")
+            print(f"flight number = {flo}      departure time = {tdep}        arrival time = {tarr}     ")
+            print("class = economy class")
+            for q in my_cursor:
+                payment.append(q)
+                print()
+                print("-------------------------------------------------")
+                print(f"\nTicket price : Rs {q} ")
+
+        elif ans == 2 and cl == 2:
+            fl_nm()
+            query16 = "SELECT (CHARGES +CHARGES*0.2)*{} FROM FLIGHTS WHERE airlines_name = '{}' and DEPARTURE = '{}' and DESTINATION = '{}' ".format(
+                passenger, fli[0], deploc[0], arrloc[0])
+            my_cursor.execute(query16)
+            print(f"\nnames = {nam}               age = {ag}           gender = {gende}")
+            print(f"flight name = {fli}         departure = {deploc}       destinatio = {arrloc}")
+            print(f"flight number = {flo}      departure time = {tdep}        arrival time = {tarr}     ")
+            print("class = business class")
+            for r in my_cursor:
+                payment.append(r)
+                print()
+                print('-------------------------------------------------')
+                print(f"\nTicket price : Rs {r}")
+           
+
+        elif ans == 2 and cl == 3:
+            fl_nm()
+            query17 = "SELECT (CHARGES +CHARGES*0.4)*{} FROM FLIGHTS WHERE airlines_name = '{}' and DEPARTURE = '{}' and DESTINATION = '{}' ".format(
+                passenger, fli[0], deploc[0], arrloc[0])
+            my_cursor.execute(query17)
+            print(f"\nnames = {nam}               age = {ag}           gender = {gende}")
+            print(f"flight name = {fli}         departure = {deploc}       destination = {arrloc}")
+            print(f"flight number = {flo}      departure time = {tdep}        arrival time = {tarr}     ")
+            print("class = first class")
+            for s in my_cursor:
+                payment.append(s)
+                print()
+                print("-------------------------------------------------")
+                print(f"\nTicket price : Rs {s} ")
+                
+        if mc1 ==1:
+            print()
+            print(f"Meal Price : Rs {mp1} ")
+        if hc1 ==1:
+            print()
+            print(f"Hotel Price : Rs {hp1}")
+        print()
+        print("-------------------------------------------------")
+
+        pay = input("\nTO PAY PRESS (P):- ")
+
+        if pay == 'p' or pay == 'P':
+            print("\nHOW YOU WANT TO PAY ?")
+            print("1.CREDIT CARD")
+            print("2.DEBIT CARD")
+            print("3.PAYPAL")
+        pay2 = int(input("\nENTER YOUR PAYMENT METHOD (1/2/3):- "))
+        if pay2 == 1 or pay2 == 2:
+            print("\n-------------------CARD payment---------------------------")
+            print(F"PAY {payment[0]} RUPEES")
+            c_no = int(input("\nENTER YOUR CARD NO:- "))
+            cvv = int(input("\nENTER YOUR CVV:- "))
+            ott2 = int(input("\nENTER A OTP SEND TO YOUR NUMBER:- "))
+            print("\nTRANSACTION SUCCESSFUL------------")
+            print("**THANK YOU*")
+
+        if pay2 == 3:
+            print("\n-------------------PAYPAL---------------------------")
+            print(F"PAY {payment[0]} RUPEES")
+            pay3 = input("\nTO CONTINUE PAYMENT PRESS (P):- ")
+            ott = int(input("\nENTER A OTP SENT TO YOUR PHONE NO AND EMAIL:- "))
+            print("\nTRANSACTION SUCCESSFUL------------")
+            print("**THANK YOU*")
+            print("\n--------THANKS FOR USING FLIGHT BOOKING SYSTEM--------------")
+            print(f"\nYOUR TICKETS ARE SEND TO YOUR EMAIL {e[0]} ")
+            print("\nSEE YOU LATER :)")
+
+
+    elif enter == 2:
+        choice = int(input("""\n1.STEPS FOR WEB CHECK-IN
+2.ENTRY TO AIRPORT
+3.INSIDE THE AIRPORT
+4.IN-FLIGHT
+
+Your Choice : """))
+        print("")
+        print("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
+        if choice == 1:
+            print("""
+1. Web check-in on our website www.flightbooking.com or using the  FLIGHT BOOKING App.
+
+2. One check-in bag of up to 15 kg and one hand bag of up to 7 kg are allowed. Add your check-in baggage during the web check-in process.
+
+3. Boarding pass along with a baggage label will be emailed to you post web check-in. Please ensure the baggage label is properly displayed on your checked-in baggage.
+
+4. You can also travel with an E-boarding pass.""")
+        elif choice == 2:
+            print("""
+1. Always wear a mask and maintain social distancing during the course of your journey.
+
+2. Arrive at the airport at least 2 hours prior to departure. Baggage drop will close 1 hour prior to and boarding gates will close 20 mins prior to departure respectively.
+
+3.  A green status on your Flight  app is mandatory to be able to enter the airport , Only children below 14 years of age will be exempted.
+
+4. You have to show your identity card and a printout of your boarding pass or mobile boarding pass to the CISF staff at the airport’s entry.""")
+        elif choice == 3:
+            print("""
+1. Use of trolleys should be avoided.
+
+2. Please avoid touching surfaces as much as possible.
+
+3. Try to use airport restrooms instead of the aircraft ones since aircraft lavatories are compact.
+
+4.  Proper Social Distancing should be Maintained""")
+        elif choice == 4:
+            print("""
+1. We have temporarily suspended food and beverage services on all our flights. Except for purposes F&B consumption is not permitted on-board the flight.
+
+2. Our in-flight magazine and any other reading material will also not be available during this period.
+
+3. Please limit your movement in the aircraft cabin. Unless absolutely necessary,avoid getting up and visiting the lavatories once you are seated.""")
+
+        else:
+            print("Invalid Entry")
+    elif enter == 3:
+        pass
+book_flights()
