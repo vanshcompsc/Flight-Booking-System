@@ -276,9 +276,9 @@ Overall, the Flight Booking Management System has served as a valuable project, 
 
 
 
-<p align="justify">
+
 </div>
-</p>
+
 <hr>
 
 
