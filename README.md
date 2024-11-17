@@ -273,14 +273,10 @@ Overall, the Flight Booking Management System has served as a valuable project, 
 <hr>
 
 
-<!-- Contributing -->
-<h2 id="Contributing"> Contributing </h2>
+
+
 
 <p align="justify">
-
-See [the contributing guide](CONTRIBUTING.md) for detailed instructions on how to get started with our project.
-
-
 </div>
 </p>
 <hr>
