@@ -1,3 +1,43 @@
+<h1 align="center"> Flight Ticket Booking Management System </h1>
+
+<details open="open">
+  <summary>Table of Contents</summary>
+  <ol>
+    <li><a href="#Installation"> Installation </a></li>
+    <li><a href="#Introduction"> Introduction </a></li>
+    <li><a href="#Components of the Database Design"> Components of the Database Design </a></li>
+    <ul>
+      <li><a href="#Payment"> Payment </a></li>
+      <li><a href="#Flights"> Flights </a></li>
+      <li><a href="#Cancellation"> Cancellation </a></li>
+      <li><a href="#Company"> Company </a></li>
+      <li><a href="#Initial Account Info"> Initial Account Info </a></li>
+      <li><a href="#Full Account Info"> Full Account Info </a></li>
+      <li><a href="#Indivo, Nistara, MetAirways, Picejet"> Indivo, Nistara, MetAirways, Picejet </a></li>
+      <li><a href="#Cust_Choice-Flight"> Customer Choice Flight </a></li>
+      <li><a href="#Customer"> Customer </a></li>
+    </ul>
+    <li><a href="#Entity Relationship Diagram">  Entity Relationship Diagram </a></li>
+    <li><a href="#Relational Model"> Relational Model </a></li>
+    <li><a href="#Normalization"> Normalization </a></li>
+    <li><a href="#Learning from the Project"> Learning from the Project </a></li>
+    <li><a href="#Challenges Faced"> Challenges Faced </a></li>
+    <li><a href="#Conclusion"> Conclusion </a></li>
+    <li><a href="#Contributing">  Contributing </a></li>
+    <li><a href="#ToDo">  To Do </a></li>
+    <li><a href="#Video Demo">  Video Demo </a></li>
+
+  </ol>
+</details>
+<hr>
+
+
+
+
+<h2 id="Installation"> 📦 Installation </h2>
+
+<p align="justify">
+
 ## Installation
 
 To install and set up the Flight Booking Management System project, please follow these steps:
@@ -352,3 +392,4 @@ The entire project demo can be seen here (except Admin Screens which was incorpo
 
 
 ![Admin Screens](https://github.com/Haleshot/Flight_Booking_System/assets/57552973/c730bd6f-91c0-40b4-9754-7d67dcdf7669)
+
